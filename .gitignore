@@ -1,0 +1,10 @@
+decodeffmpeg/*.iml
+decodeffmpeg/.gradle
+decodeffmpeg/local.properties
+decodeffmpeg/.idea/workspace.xml
+decodeffmpeg/.idea/libraries
+decodeffmpeg/.DS_Store
+decodeffmpeg/build
+decodeffmpeg/captures
+decodeffmpeg/app/.externalNativeBuild
+decodeffmpeg/app/build
