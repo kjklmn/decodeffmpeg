@@ -1,5 +1,7 @@
 package com.kejian.decodeffmpeg;
 
+import android.view.Surface;
+
 /**
  * 项目名称：ffmpegkejian
  * 类描述：
@@ -23,4 +25,6 @@ public class FFmpegUtils {
     }
 
     public native static  void decodeVideo(String inputStr,String outputStr);
+
+    public native static void renderVideo(String inputStr,Surface surface);
 }

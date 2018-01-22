@@ -5,9 +5,9 @@ import android.os.Build;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import java.io.File;
 
@@ -28,6 +28,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 FFmpegUtils.decodeVideo(intput,output);
+            }
+        });
+
+        final SurfaceView sv_video = (SurfaceView)findViewById(R.id.sv_video);
+        Button btn_render = (Button) findViewById(R.id.btn_render);
+        btn_render.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FFmpegUtils.renderVideo(intput,sv_video.getHolder().getSurface());
             }
         });
     }
