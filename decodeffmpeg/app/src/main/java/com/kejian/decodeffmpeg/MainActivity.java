@@ -12,11 +12,13 @@ import android.widget.Button;
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
-
+    FFmpegUtils mFFmpegUtils;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mFFmpegUtils = new FFmpegUtils();
         final String intput = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"input.mp4";
         final String output = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"sintel_decoded_22.yuv";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -27,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         btn_decode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FFmpegUtils.decodeVideo(intput,output);
+                mFFmpegUtils.decodeVideo(intput,output);
             }
         });
 
@@ -36,8 +38,32 @@ public class MainActivity extends AppCompatActivity {
         btn_render.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FFmpegUtils.renderVideo(intput,sv_video.getHolder().getSurface());
+                mFFmpegUtils.renderVideo(intput,sv_video.getHolder().getSurface());
             }
         });
+
+
+        final String inputAudio = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separatorChar
+                + "love.mp3";
+        Button btn_render_audio = (Button) findViewById(R.id.btn_render_audio);
+        btn_render_audio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mFFmpegUtils.playAudio(inputAudio);
+            }
+        });
+
+
+
+        final String outputAudio = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separatorChar
+                + "love.pcm";
+        Button btn_decode_audio = (Button) findViewById(R.id.btn_decode_audio);
+        btn_decode_audio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mFFmpegUtils.decodeAudio(inputAudio,outputAudio);
+            }
+        });
+
     }
 }
