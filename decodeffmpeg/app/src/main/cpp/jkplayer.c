@@ -69,6 +69,53 @@ Java_com_kejian_decodeffmpeg_FFmpegUtils_decodeVideo(JNIEnv *env, jclass type, j
     LOGI("视频的宽高：%d,%d", pCodecCtx->width, pCodecCtx->height);
     LOGI("解码器的名称：%s", pCodec->name);
 
+    AVPacket *packet = (AVPacket*)av_malloc(sizeof(AVPacket));
+    AVFrame *frame = av_frame_alloc();
+    AVFrame *pFrameYUV = av_frame_alloc();
+
+    uint8_t *out_buffer = (uint8_t *)av_malloc(avpicture_get_size(AV_PIX_FMT_YUV420P,pCodecCtx->width,pCodecCtx->height));
+    avpicture_fill((AVPicture*)pFrameYUV,out_buffer,AV_PIX_FMT_YUV420P,pCodecCtx->width,pCodecCtx->height);
+
+    struct SwsContext *sws_ctx = sws_getContext(pCodecCtx->width,pCodecCtx->height,pCodecCtx->pix_fmt,pCodecCtx->width,pCodecCtx->height,AV_PIX_FMT_YUV420P,SWS_BICUBIC,NULL,NULL,NULL);
+
+    int got_picture,ret;
+    FILE* fp_yuv = fopen(outputStr,"wb+");
+    int frame_count = 0;
+    while(av_read_frame(pFormatCtx,packet) >= 0) {
+        if(packet->stream_index == v_stream_index) {
+            if(avcodec_decode_video2(pCodecCtx,frame,&got_picture,packet) < 0) {
+                LOGE("%s","解码失败");
+                return;
+            }
+            if(got_picture) {
+                sws_scale(sws_ctx, frame->data, frame->linesize, 0, pCodecCtx->height,
+                          pFrameYUV->data, pFrameYUV->linesize);
+
+                //输出到YUV文件
+                //AVFrame像素帧写入文件
+                //data解码后的图像像素数据（音频采样数据）
+                //Y 亮度 UV 色度（压缩了） 人对亮度更加敏感
+                //U V 个数是Y的1/4
+                int y_size = pCodecCtx->width * pCodecCtx->height;
+                fwrite(pFrameYUV->data[0], 1, y_size, fp_yuv);
+                fwrite(pFrameYUV->data[1], 1, y_size / 4, fp_yuv);
+                fwrite(pFrameYUV->data[2], 1, y_size / 4, fp_yuv);
+
+                frame_count++;
+                LOGI("解码第%d帧",frame_count);
+
+            }
+
+        }
+        av_free_packet(packet);
+    }
+
+    fclose(fp_yuv);
+    av_frame_free(&frame);
+    avcodec_close(pCodecCtx);
+    avformat_free_context(pFormatCtx);
+
+
 
     (*env)->ReleaseStringUTFChars(env, inputStr_, inputStr);
     (*env)->ReleaseStringUTFChars(env, outputStr_, outputStr);

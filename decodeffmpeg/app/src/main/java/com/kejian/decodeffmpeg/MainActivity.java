@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final String intput = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"input.mp4";
-        final String output = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"sintel_decoded.yuv";
+        final String output = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"sintel_decoded_22.yuv";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS}, 0);
         }
